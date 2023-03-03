@@ -22,7 +22,7 @@ export default function Map({ viewOptions }: Props) {
   useEffect(() => {
     if (!mapRef.current || !viewOptions) return;
 
-    mapRef.current.setView(viewOptions.center, viewOptions.zoom);
+    mapRef.current.flyTo(viewOptions.center, viewOptions.zoom);
   }, [viewOptions]);
 
   return (
