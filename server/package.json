@@ -1,0 +1,10 @@
+{
+  "name": "jcd-gis-mokafaha-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "GCE",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
