@@ -1,22 +1,61 @@
-import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
+import { MapContainer, Marker, Popup, TileLayer, useMap, WMSTileLayer } from 'react-leaflet';
+import * as L from 'leaflet';
+import { useEffect, useRef } from 'react';
 
-export default function Map() {
+export type ViewOptions = {
+  center: [number, number];
+  zoom: number;
+};
+
+const defaultViewOptions: ViewOptions = {
+  center: [31.3, 37.5],
+  zoom: 8,
+};
+
+type Props = {
+  viewOptions?: ViewOptions;
+};
+
+export default function Map({ viewOptions }: Props) {
+  const mapRef = useRef<L.Map>(null);
+
+  useEffect(() => {
+    if (!mapRef.current || !viewOptions) return;
+
+    mapRef.current.setView(viewOptions.center, viewOptions.zoom);
+  }, [viewOptions]);
+
   return (
     <MapContainer
-      center={[51.505, -0.09]}
-      zoom={13}
-      scrollWheelZoom={false}
+      {...(viewOptions ? viewOptions : defaultViewOptions)}
       style={{ flex: 1, height: '100%', width: '100vw' }}
+      ref={mapRef}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      <Marker position={[51.505, -0.09]}>
-        <Popup>
-          A pretty CSS3 popup. <br /> Easily customizable.
-        </Popup>
-      </Marker>
+      <WMSTileLayer
+        url="https://geoserver.gisjordan.com/geoserver/gce/wms"
+        crs={L.CRS.EPSG4326}
+        layers="gce:Jurisdiction_Areas"
+        format="image/png"
+        transparent={true}
+        opacity={1}
+        version="1.1.1"
+        styles="jcd_jur"
+        attribution="JCD - GCE Jordan"
+      />
+      <WMSTileLayer
+        url="https://geoserver.gisjordan.com/geoserver/gce/wms"
+        crs={L.CRS.EPSG4326}
+        layers="gce:centers"
+        format="image/png"
+        transparent={true}
+        version="1.1.1"
+        styles="jcd_centers"
+        attribution="JCD - GCE Jordan"
+      />
     </MapContainer>
   );
 }
